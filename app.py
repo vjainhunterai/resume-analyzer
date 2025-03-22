@@ -27,7 +27,7 @@ if uploaded_file:
     print(resume_text)
 
     if st.button("Analyze Resume"):
-    with st.spinner("Analyzing..."):
+        with st.spinner("Analyzing..."):
         files = {"resume": uploaded_file.getvalue()}
         response = requests.post(f"{API_URL}/analyze_candidate/", files=files)
 
@@ -37,3 +37,5 @@ if uploaded_file:
             st.json(result)  # Display structured analysis
         else:
             st.error("❌ Failed to analyze the resume. Try again.")
+
+    
