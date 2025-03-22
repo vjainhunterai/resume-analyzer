@@ -1,35 +1,37 @@
 import streamlit as st
 import requests
-import fitz  # PyMuPDF for PDF processing
+import fitz  # PyMuPDF for PDF handling
 
-# Llama API Details
-LLAMA_API_URL = "https://your-llama-api-endpoint.com"
-LLAMA_API_KEY = ""
+# Backend API URL (FastAPI on Railway)
+API_URL = "https://web-production-48b35.up.railway.app/"
 
-from fastapi import FastAPI, UploadFile, File
-import requests
-import os
+st.title("📄 AI Resume Analyzer")
+st.write("Upload your resume and let AI analyze it!")
 
-app = FastAPI()
+# Upload Resume (PDF)
+uploaded_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"])
 
-# Use Hugging Face Llama API
-HF_API_URL = "https://api-inference.huggingface.co/models/meta-llama/llama-3-8b"
-HF_API_KEY = "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"
+def extract_text_from_pdf(uploaded_file):
+    """Extracts text from uploaded PDF"""
+    pdf_reader = fitz.open(stream=uploaded_file.read(), filetype="pdf")
+    text = ""
+    for page in pdf_reader:
+        text += page.get_text("text") + "\n"
+    return text
 
-@app.post("/analyze_candidate/")
-async def analyze_candidate(resume: UploadFile = File(...)):
-    """Upload and analyze resume using Hugging Face API"""
-    
-    # Read resume text
-    resume_text = await resume.read()
-    resume_text = resume_text.decode("utf-8")
+if uploaded_file:
+    st.write("✅ Resume Uploaded!")
 
-    # Call Hugging Face API
-    response = requests.post(
-        HF_API_URL,
-        headers={"Authorization": f"Bearer {HF_API_KEY}"},
-        json={"inputs": f"Analyze this resume: {resume_text}"}
-    )
+    # Extract text from PDF
+    resume_text = extract_text_from_pdf(uploaded_file)
 
-    return response.json()
+    if st.button("Analyze Resume"):
+        # Send extracted text to FastAPI backend
+        response = requests.post(f"{API_URL}/analyze", json={"resume_text": resume_text})
 
+        if response.status_code == 200:
+            result = response.json()
+            st.subheader("📊 Analysis Report")
+            st.json(result)  # Display structured analysis
+        else:
+            st.error("❌ Failed to analyze the resume. Try again.")
