@@ -24,6 +24,7 @@ if uploaded_file:
 
     # Extract text from PDF
     resume_text = extract_text_from_pdf(uploaded_file)
+    print(resume_text)
 
     if st.button("Analyze Resume"):
         # Send extracted text to FastAPI backend
