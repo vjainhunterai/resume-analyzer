@@ -28,7 +28,7 @@ if uploaded_file:
 
     if st.button("Analyze Resume"):
         with st.spinner("Analyzing..."):
-            files = {"resume": uploaded_file.getvalue()}  # Correct indentation
+            files = {"resume": uploaded_file}  # No need to use `.getvalue()`
             response = requests.post(f"{API_URL}/analyze_candidate/", files=files)
 
             if response.status_code == 200:
