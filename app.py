@@ -28,14 +28,12 @@ if uploaded_file:
 
     if st.button("Analyze Resume"):
         with st.spinner("Analyzing..."):
-        files = {"resume": uploaded_file.getvalue()}
-        response = requests.post(f"{API_URL}/analyze_candidate/", files=files)
+            files = {"resume": uploaded_file.getvalue()}  # Correct indentation
+            response = requests.post(f"{API_URL}/analyze_candidate/", files=files)
 
-        if response.status_code == 200:
-            result = response.json()
-            st.subheader("📊 Analysis Report")
-            st.json(result)  # Display structured analysis
-        else:
-            st.error("❌ Failed to analyze the resume. Try again.")
-
-    
+            if response.status_code == 200:
+                result = response.json()
+                st.subheader("📊 Analysis Report")
+                st.json(result)  # Display structured analysis
+            else:
+                st.error("❌ Failed to analyze the resume. Try again.")
