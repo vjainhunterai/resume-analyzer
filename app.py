@@ -3,8 +3,8 @@ import requests
 import fitz  # PyMuPDF for PDF processing
 
 # Llama API Details
-LLAMA_API_URL = "https://api.llama-api.com"
-LLAMA_API_KEY = "4c28ccbc-91ab-49bd-a0e9-48320d5bfe02"
+LLAMA_API_URL = "https://your-llama-api-endpoint.com"
+LLAMA_API_KEY = "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"
 
 st.title("📄 AI Resume Analyzer")
 
