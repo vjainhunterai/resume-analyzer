@@ -4,37 +4,32 @@ import fitz  # PyMuPDF for PDF processing
 
 # Llama API Details
 LLAMA_API_URL = "https://your-llama-api-endpoint.com"
-LLAMA_API_KEY = "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"
+LLAMA_API_KEY = ""
 
-st.title("📄 AI Resume Analyzer")
+from fastapi import FastAPI, UploadFile, File
+import requests
+import os
 
-st.write("Upload a resume (PDF/Text), and get AI analysis!")
+app = FastAPI()
 
-# Upload File
-uploaded_file = st.file_uploader("Upload your resume", type=["pdf", "txt"])
+# Use Hugging Face Llama API
+HF_API_URL = "https://api-inference.huggingface.co/models/meta-llama/llama-3-8b"
+HF_API_KEY = "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"
 
-if uploaded_file:
-    text_data = ""
+@app.post("/analyze_candidate/")
+async def analyze_candidate(resume: UploadFile = File(...)):
+    """Upload and analyze resume using Hugging Face API"""
+    
+    # Read resume text
+    resume_text = await resume.read()
+    resume_text = resume_text.decode("utf-8")
 
-    if uploaded_file.type == "application/pdf":
-        doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
-        text_data = "\n".join([page.get_text() for page in doc])
-    else:
-        text_data = uploaded_file.read().decode("utf-8")
+    # Call Hugging Face API
+    response = requests.post(
+        HF_API_URL,
+        headers={"Authorization": f"Bearer {HF_API_KEY}"},
+        json={"inputs": f"Analyze this resume: {resume_text}"}
+    )
 
-    # Display extracted text
-    st.subheader("Extracted Resume Text")
-    st.text_area("Resume Content", text_data, height=250)
+    return response.json()
 
-    if st.button("Analyze Resume"):
-        with st.spinner("Analyzing..."):
-            response = requests.post(
-                LLAMA_API_URL,
-                json={"text": text_data, "api_key": LLAMA_API_KEY}
-            )
-
-            if response.status_code == 200:
-                st.success("✅ Analysis Complete!")
-                st.write(response.json())
-            else:
-                st.error("❌ Error analyzing resume!")
