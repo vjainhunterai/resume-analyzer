@@ -27,8 +27,9 @@ if uploaded_file:
     print(resume_text)
 
     if st.button("Analyze Resume"):
-        # Send extracted text to FastAPI backend
-        response = requests.post(f"{API_URL}/analyze", json={"resume_text": resume_text})
+    with st.spinner("Analyzing..."):
+        files = {"resume": uploaded_file.getvalue()}
+        response = requests.post(f"{API_URL}/analyze_candidate/", files=files)
 
         if response.status_code == 200:
             result = response.json()
