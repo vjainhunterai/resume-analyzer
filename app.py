@@ -20,16 +20,20 @@ if uploaded_files:
 
             if response.status_code == 200:
                 ranked_results = response.json()["ranked_resumes"]
+                if not ranked_results:
+                    st.warning("⚠ No resumes were ranked. Please check your input files.")
+                else:
+                    st.subheader("🏆 Resume Ranking Results")
+                     for i, candidate in enumerate(ranked_results, start=1):
+                         st.markdown(f"### 🏆 Rank #{i}: {candidate['Filename']}")
+                         st.write(f"**📂 Category:** {candidate['Category']}")
+                         st.write(f"**📅 Experience:** {candidate['Experience_Years']} years")
+                         st.write(f"**🎯 Key Skills:** {', '.join(candidate['Key_Skills'])}")
+                         st.write(f"**🎓 Education:** {candidate['Education']}")
+                         st.write(f"**📜 Certifications:** {', '.join(candidate['Certifications']) if candidate['Certifications'] else 'None'}")
+                         st.write(f"**📊 Rank Score:** {round(candidate['Rank_Score'], 2)}")
+                         st.markdown("---")  # Separator
 
-                st.subheader("🏆 Resume Ranking Results")
-                for i, candidate in enumerate(ranked_results, start=1):
-                    st.markdown(f"### 🏆 Rank #{i}: {candidate['Filename']}")
-                    st.write(f"**📂 Category:** {candidate['Category']}")
-                    st.write(f"**📅 Experience:** {candidate['Experience_Years']} years")
-                    st.write(f"**🎯 Key Skills:** {', '.join(candidate['Key_Skills'])}")
-                    st.write(f"**🎓 Education:** {candidate['Education']}")
-                    st.write(f"**📜 Certifications:** {', '.join(candidate['Certifications']) if candidate['Certifications'] else 'None'}")
-                    st.write(f"**📊 Rank Score:** {round(candidate['Rank_Score'], 2)}")
-                    st.markdown("---")  # Separator
+                
             else:
                 st.error(f"❌ Failed to analyze resumes. Error: {response.text}")
