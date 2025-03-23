@@ -51,7 +51,7 @@ st.title("📄 AI Resume Ranking System")
 st.write("Upload multiple resumes and let AI rank them!")
 
 # Allow multiple PDFs to be uploaded
-uploaded_files = st.file_uploader("Upload Resumes (PDF)", type=["pdf"], accept_multiple_files=True)
+uploaded_files = st.file_uploader("Upload Resumes (PDF)", type=["pdf"], accept_multiple_files=True, key="file_upload")
 
 if uploaded_files:
     st.success(f"✅ {len(uploaded_files)} resumes uploaded successfully!")
